@@ -57,7 +57,7 @@ export default function TicketView() {
   // Load events/tickets from local storage (client only)
   useEffect(() => {
     if (!address) return;
-    const load = async () => {
+    const load = async (isInitial = false) => {
       const [active, myTickets] = await Promise.all([
         listActiveEvents(),
         listTicketsForAddress(address),
@@ -65,15 +65,25 @@ export default function TicketView() {
       setEvents(active);
       setTickets(myTickets);
 
-      const urlEvent = searchParams?.get("eventId");
-      // Only auto-select if there's a URL parameter, otherwise show cards
-      const chosen = urlEvent && active.find((e) => e.id === urlEvent) ? urlEvent : null;
-      setSelectedEventId(chosen);
+      // Only set selectedEventId on initial load or if URL parameter changes
+      if (isInitial) {
+        const urlEvent = searchParams?.get("eventId");
+        // Only auto-select if there's a URL parameter, otherwise show cards
+        const chosen = urlEvent && active.find((e) => e.id === urlEvent) ? urlEvent : null;
+        setSelectedEventId(chosen);
+      } else {
+        // On refresh, preserve selectedEventId if it still exists in active events
+        setSelectedEventId((prev) => {
+          if (!prev) return null;
+          // If current selection is still valid, keep it
+          return active.find((e) => e.id === prev) ? prev : null;
+        });
+      }
     };
-    load();
+    load(true); // Initial load
     
     // Refresh tickets every 5 seconds to check if they've been scanned
-    const interval = setInterval(load, 5000);
+    const interval = setInterval(() => load(false), 5000);
     return () => clearInterval(interval);
   }, [address, searchParams]);
 

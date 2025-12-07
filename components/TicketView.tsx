@@ -2,7 +2,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   useAccount,
-  useReadContract,
   useWriteContract,
   useSignMessage,
 } from "wagmi";

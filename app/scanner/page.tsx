@@ -35,6 +35,7 @@ export default function ScannerPage() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [newEventName, setNewEventName] = useState("");
   const [newEventExpiry, setNewEventExpiry] = useState("");
+  const [newEventPrice, setNewEventPrice] = useState("");
   const { showToast, ToastComponent } = useToast();
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -291,7 +292,7 @@ export default function ScannerPage() {
       return;
     }
     if (!newEventName || !newEventExpiry) {
-      showToast("Please fill in all fields", "error");
+      showToast("Please fill in all required fields", "error");
       return;
     }
     const expiresAt = new Date(newEventExpiry).getTime();
@@ -302,9 +303,15 @@ export default function ScannerPage() {
       return;
     }
     
+    const price = parseFloat(newEventPrice) || 0;
+    if (price < 0) {
+      showToast("Price cannot be negative", "error");
+      return;
+    }
+    
     try {
       const eventName = newEventName; // Save before clearing
-      const evt = await createEventDb(eventName, expiresAt, address);
+      const evt = await createEventDb(eventName, expiresAt, address, price);
       console.log("Event created:", evt);
       
       // Refresh events list
@@ -315,6 +322,7 @@ export default function ScannerPage() {
       // Clear form
       setNewEventName("");
       setNewEventExpiry("");
+      setNewEventPrice("");
       setStatus("IDLE");
       
       showToast(`Event "${eventName}" created!`, "success");
@@ -376,14 +384,31 @@ export default function ScannerPage() {
                   className="bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              <button
-                onClick={handleCreateEvent}
-                type="button"
-                disabled={!address || !newEventName || !newEventExpiry}
-                className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 active:scale-95 disabled:active:scale-100"
-              >
-                Create Event
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <input
+                    type="number"
+                    value={newEventPrice}
+                    onChange={(e) => setNewEventPrice(e.target.value)}
+                    placeholder="Ticket price (USDC)"
+                    min="0"
+                    step="0.01"
+                    className="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">USDC</span>
+                </div>
+                  <button
+                  onClick={handleCreateEvent}
+                  type="button"
+                  disabled={!address || !newEventName || !newEventExpiry}
+                  className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 active:scale-95 disabled:active:scale-100"
+                >
+                  Create Event
+                </button>
+              </div>
+              <p className="text-xs text-gray-500">
+                Leave price empty or set to 0 for free events. Price is in USDC.
+              </p>
               <p className="text-xs text-gray-500 mt-3">
                 Buyers must open the event link to purchase a ticket. Expired events are hidden automatically.
               </p>
@@ -419,9 +444,15 @@ export default function ScannerPage() {
                             <p className="text-xs text-gray-400 mb-3">
                               Expires {new Date(e.expiresAt).toLocaleString()}
                             </p>
-                            <div className="flex gap-4 text-sm">
+                            <div className="flex gap-4 text-sm mb-2">
                               <span className="text-gray-500">Sold: <span className="text-blue-400 font-bold">{e.sold}</span></span>
                               <span className="text-gray-500">Scanned: <span className="text-green-400 font-bold">{e.scanned}</span></span>
+                            </div>
+                            <div className="text-sm">
+                              <span className="text-gray-500">Price: </span>
+                              <span className="text-blue-400 font-bold">
+                                {e.price && e.price > 0 ? `${e.price} USDC` : "FREE"}
+                              </span>
                             </div>
                           </div>
                           <button

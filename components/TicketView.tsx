@@ -211,22 +211,106 @@ export default function TicketView() {
 
   if (!selectedEventId) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 text-center">
-        <h2 className="text-xl font-bold">No active event selected</h2>
-        <p className="text-gray-400 text-sm max-w-sm">
-          Ask the organizer for an event link, or open a ticket link to auto-select the event.
-        </p>
-        {events.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-center">
-            {events.map((e) => (
-              <button
-                key={e.id}
-                onClick={() => setSelectedEventId(e.id)}
-                className="px-3 py-2 text-xs rounded-lg bg-gray-800 hover:bg-gray-700"
-              >
-                {e.name}
-              </button>
-            ))}
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold mb-2">Available Events</h2>
+          <p className="text-gray-400">
+            Select an event to view your ticket or get a new one
+          </p>
+        </div>
+        {events.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((e) => {
+              const hasTicket = tickets.some((t) => t.eventId === e.id && t.address === (address || "").toLowerCase());
+              const ticket = tickets.find((t) => t.eventId === e.id && t.address === (address || "").toLowerCase());
+              const isExpired = e.expiresAt <= Date.now();
+              const isScanned = ticket?.scanned || false;
+              
+              return (
+                <div
+                  key={e.id}
+                  className="bg-gray-900 rounded-xl p-6 border-2 border-gray-800 hover:border-blue-500 transition-all duration-200 shadow-xl hover:shadow-2xl cursor-pointer"
+                  onClick={() => setSelectedEventId(e.id)}
+                >
+                  {/* Event Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-xl font-bold text-white flex-1 pr-2">
+                      {e.name}
+                    </h3>
+                    {hasTicket && (
+                      <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                        isScanned 
+                          ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                          : "bg-green-500/20 text-green-400 border border-green-500/30"
+                      }`}>
+                        {isScanned ? "USED" : "TICKET"}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Event Details */}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                        <span>📅</span>
+                        <span>{new Date(e.expiresAt).toLocaleDateString()}</span>
+                      </div>
+                      <div className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                        <span className="text-blue-400 font-bold text-sm">
+                          {e.price && e.price > 0 ? `${e.price} USDC` : "FREE"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400 text-sm">
+                      <span>🕐</span>
+                      <span>{new Date(e.expiresAt).toLocaleTimeString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400 text-sm">
+                      <span>👥</span>
+                      <span>{e.sold} sold • {e.scanned} scanned</span>
+                    </div>
+                  </div>
+
+                  {/* Status Badge */}
+                  <div className="mt-4 pt-4 border-t border-gray-800">
+                    <div className="flex items-center justify-between">
+                      <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                        isExpired
+                          ? "bg-gray-700 text-gray-400"
+                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      }`}>
+                        {isExpired ? "EXPIRED" : "STATUS: OPEN"}
+                      </span>
+                      {!isExpired && (
+                        <span className="text-yellow-400 text-xs font-medium">
+                          Deadline: {new Date(e.expiresAt).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <button
+                    onClick={(evt) => {
+                      evt.stopPropagation();
+                      setSelectedEventId(e.id);
+                    }}
+                    type="button"
+                    className="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 active:scale-95"
+                  >
+                    {hasTicket ? (isScanned ? "View Details" : "View Ticket") : "Get Ticket"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🎫</div>
+            <h3 className="text-xl font-bold mb-2">No Active Events</h3>
+            <p className="text-gray-400 text-sm max-w-sm mx-auto">
+              Ask the organizer for an event link, or check back later for new events.
+            </p>
           </div>
         )}
       </div>

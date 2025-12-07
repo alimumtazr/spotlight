@@ -48,21 +48,29 @@ export default function Page() {
       {/* Main Content - Centered Container */}
       <div className="w-full max-w-4xl mx-auto">
         {!isConnected ? (
-          <div className="space-y-8">
+          <div className="space-y-12">
             {/* Hero Section */}
             <div className="text-center">
-              <div className="bg-gray-900 rounded-xl p-8 md:p-12 border-2 border-gray-800 shadow-xl">
-                <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
+              <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-8 md:p-12 border-2 border-gray-800 shadow-2xl">
+                <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
                   SpotLight
                 </h1>
-                <p className="text-lg text-gray-400 mb-6">
-                  The un-screenshot-able ticket for live events.
+                <p className="text-xl md:text-2xl text-gray-300 mb-2 font-medium">
+                  The Un-Screenshot-able Ticket for Live Events
                 </p>
-                <div className="bg-gray-800 rounded-lg p-4 border-2 border-gray-700">
-                  <p className="text-blue-200 text-sm mb-2">
-                    Connect your wallet to get started
-                  </p>
-                  <div className="animate-pulse bg-blue-500/20 h-1.5 w-32 mx-auto rounded-full"></div>
+                <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+                  No screenshots. No duplicates. No fraud. Your secure, blockchain-powered event access solution.
+                </p>
+                <div className="flex flex-wrap gap-3 justify-center mb-6">
+                  <div className="bg-blue-500/10 border-2 border-blue-500/30 rounded-lg px-4 py-2">
+                    <span className="text-blue-300 text-sm font-semibold">🔐 Cryptographic Security</span>
+                  </div>
+                  <div className="bg-purple-500/10 border-2 border-purple-500/30 rounded-lg px-4 py-2">
+                    <span className="text-purple-300 text-sm font-semibold">⏱️ Auto-Rotating QR</span>
+                  </div>
+                  <div className="bg-green-500/10 border-2 border-green-500/30 rounded-lg px-4 py-2">
+                    <span className="text-green-300 text-sm font-semibold">✅ One-Time Use</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -106,6 +114,118 @@ export default function Page() {
                     Create events, manage tickets, and scan QR codes
                   </p>
                 </button>
+              </div>
+            </div>
+
+            {/* About Section */}
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 md:p-8 border-2 border-gray-800 shadow-xl">
+              <h2 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                About SpotLight
+              </h2>
+              
+              <div className="space-y-6">
+                {/* Problem */}
+                <div className="bg-red-500/10 border-2 border-red-500/30 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-3xl">⚠️</div>
+                    <h3 className="text-xl font-bold text-red-400">The Problem</h3>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed">
+                    Traditional event ticketing systems suffer from critical vulnerabilities: tickets can be easily screenshotted and shared, 
+                    leading to fraud and revenue loss. Physical tickets can be duplicated, and digital tickets lack real-time verification. 
+                    Event organizers struggle with ticket scalping, unauthorized entry, and the inability to track genuine ticket usage. 
+                    This creates security gaps and financial losses for both organizers and legitimate attendees.
+                  </p>
+                </div>
+
+                {/* Solution */}
+                <div className="bg-blue-500/10 border-2 border-blue-500/30 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-3xl">💡</div>
+                    <h3 className="text-xl font-bold text-blue-400">Our Solution</h3>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    SpotLight revolutionizes event ticketing with blockchain-powered, un-screenshot-able QR codes. Our system uses 
+                    cryptographic signatures and time-based window rotation to create tickets that cannot be duplicated or reused. 
+                    Each QR code refreshes every 30 seconds, making screenshots useless. The blockchain ensures one-time use, 
+                    preventing fraud while providing real-time verification for event organizers.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-3 mt-4">
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                      <div className="font-semibold text-blue-300 mb-1">🔐 Cryptographic Security</div>
+                      <p className="text-xs text-gray-400">Blockchain signatures prevent forgery</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                      <div className="font-semibold text-blue-300 mb-1">⏱️ Time-Window Rotation</div>
+                      <p className="text-xs text-gray-400">QR codes auto-refresh every 30 seconds</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                      <div className="font-semibold text-blue-300 mb-1">✅ One-Time Use</div>
+                      <p className="text-xs text-gray-400">Tickets marked as used after scanning</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                      <div className="font-semibold text-blue-300 mb-1">📊 Real-Time Tracking</div>
+                      <p className="text-xs text-gray-400">Live stats for organizers</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Future Prospects */}
+                <div className="bg-green-500/10 border-2 border-green-500/30 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-3xl">🚀</div>
+                    <h3 className="text-xl font-bold text-green-400">Future Prospects</h3>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    SpotLight is designed to scale across diverse use cases beyond traditional events. Our secure ticketing infrastructure 
+                    is perfect for:
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <div className="text-2xl">🚌</div>
+                      <div>
+                        <h4 className="font-semibold text-green-300 mb-1">GIKI Bus Ticket System</h4>
+                        <p className="text-sm text-gray-400">
+                          Secure bus ticket management for GIKI (Ghulam Ishaq Khan Institute) transportation. Students can purchase 
+                          tickets on-chain, and bus operators can verify tickets in real-time, preventing ticket fraud and ensuring 
+                          accurate passenger tracking.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <div className="text-2xl">🏏</div>
+                      <div>
+                        <h4 className="font-semibold text-green-300 mb-1">Pakistan Cricket Matches</h4>
+                        <p className="text-sm text-gray-400">
+                          Revolutionize cricket match ticketing in Pakistan. Prevent ticket scalping, ensure fair distribution, 
+                          and provide seamless entry verification at stadiums. Real-time scanning prevents duplicate entries and 
+                          enhances security for high-profile matches.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <div className="text-2xl">🎭</div>
+                      <div>
+                        <h4 className="font-semibold text-green-300 mb-1">Concerts, Festivals & More</h4>
+                        <p className="text-sm text-gray-400">
+                          Any live event requiring secure access control can benefit from SpotLight. From music festivals to 
+                          conferences, our system provides tamper-proof ticketing with minimal infrastructure requirements.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <div className="text-2xl">💬</div>
+                      <div>
+                        <h4 className="font-semibold text-green-300 mb-1">Global Event Chat</h4>
+                        <p className="text-sm text-gray-400">
+                          Coming soon: Integrated global chat system for events. Attendees can connect, share experiences, 
+                          coordinate meetups, and engage in real-time discussions. Event organizers can broadcast announcements 
+                          and create community spaces for their events.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

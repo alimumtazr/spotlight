@@ -20,6 +20,7 @@ export type DbEvent = {
   owner: string;
   sold: number;
   scanned: number;
+  price?: number; // Price in USDC (optional, defaults to 0 for free events)
 };
 
 export type DbTicket = {
@@ -57,7 +58,8 @@ export const getEvent = async (eventId: string): Promise<DbEvent | null> => {
 export const createEventDb = async (
   name: string,
   expiresAt: number,
-  owner: string
+  owner: string,
+  price: number = 0
 ): Promise<DbEvent> => {
   const newEvent: Omit<DbEvent, "id"> = {
     name,
@@ -66,6 +68,7 @@ export const createEventDb = async (
     owner: owner.toLowerCase(),
     sold: 0,
     scanned: 0,
+    price: price || 0,
   };
   const ref = await addDoc(eventsCol, newEvent);
   return { id: ref.id, ...newEvent };

@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@coinbase/onchainkit"],
+  turbopack: {},
   webpack: (config) => {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     

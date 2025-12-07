@@ -30,7 +30,6 @@ export default function TicketView() {
   const { writeContract } = useWriteContract();
   const searchParams = useSearchParams();
 
-  const [hasTicket, setHasTicket] = useState(false);
   const [timeLeft, setTimeLeft] = useState(QR_ROTATION_SECONDS);
   const [status, setStatus] = useState<"idle" | "signing" | "ready" | "error">("idle");
   
@@ -46,13 +45,14 @@ export default function TicketView() {
   const [copied, setCopied] = useState(false);
   const { showToast, ToastComponent } = useToast();
 
-  const { data: balance } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: SPOTLIGHT_ABI,
-    functionName: "balanceOf",
-    args: [address as `0x${string}`],
-    query: { enabled: !!address },
-  });
+  // Contract balance check removed - not needed for current implementation
+  // const { data: balance } = useReadContract({
+  //   address: CONTRACT_ADDRESS,
+  //   abi: SPOTLIGHT_ABI,
+  //   functionName: "balanceOf",
+  //   args: [address as `0x${string}`],
+  //   query: { enabled: !!address },
+  // });
 
   // Load events/tickets from local storage (client only)
   useEffect(() => {
@@ -73,7 +73,6 @@ export default function TicketView() {
             active[0]?.id ||
             null;
       setSelectedEventId(chosen);
-      setHasTicket(myTickets.length > 0);
     };
     load();
     
@@ -107,14 +106,14 @@ export default function TicketView() {
   const isTicketScanned = currentTicket?.scanned || false;
 
   // Generate QR string from signature + current window
-  const getQRData = () => {
+  const getQRData = useCallback(() => {
     if (!currentSignature || !selectedEventId || isTicketScanned) return "";
     return JSON.stringify({
       ...currentSignature,
       eventId: selectedEventId,
       window: getCurrentWindow(),
     });
-  };
+  }, [currentSignature, selectedEventId, isTicketScanned]);
 
   // Sign ONCE per event when ticket exists
   useEffect(() => {
@@ -189,8 +188,7 @@ export default function TicketView() {
       args: [],
     });
     // Persist ticket in Firestore
-    const ticket = await createTicket(selectedEventId, address as string);
-    setHasTicket(true);
+    await createTicket(selectedEventId, address as string);
     setTickets(await listTicketsForAddress(address as string));
     setStatus("idle");
   };

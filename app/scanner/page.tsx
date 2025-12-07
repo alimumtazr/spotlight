@@ -18,7 +18,6 @@ import { useToast } from "../../components/Toast";
 import ModeSwitcher from "../../components/ModeSwitcher";
 
 const QR_ROTATION_SECONDS = 30;
-const SCANNED_TICKETS_KEY = "spotlight_scanned_tickets";
 
 export default function ScannerPage() {
   const { address } = useAccount();
@@ -115,10 +114,8 @@ export default function ScannerPage() {
         setStatus("ERROR");
         return;
       }
-      let ticketMissing = false;
       let ticketRef = ticket;
       if (!ticketRef) {
-        ticketMissing = true;
       } else if (ticketRef.scanned) {
         setStatus("ALREADY_SCANNED");
         setScannedUser(address);

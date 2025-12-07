@@ -16,6 +16,7 @@ import {
   listTicketsForAddress,
 } from "../src/utils/dbEvents";
 import { useToast } from "./Toast";
+import WorkflowModal from "./WorkflowModal";
 
 const CONTRACT_ADDRESS = "0x0DC21BC674aF456411D98d01E79Ed98e7eaDFbe6";
 const QR_ROTATION_SECONDS = 30;
@@ -43,6 +44,7 @@ export default function TicketView() {
   const [tickets, setTickets] = useState<DbTicket[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showWorkflow, setShowWorkflow] = useState(false);
   const { showToast, ToastComponent } = useToast();
 
   // Contract balance check removed - not needed for current implementation
@@ -329,7 +331,21 @@ export default function TicketView() {
   return (
     <>
       {ToastComponent}
+      <WorkflowModal mode="user" isOpen={showWorkflow} onClose={() => setShowWorkflow(false)} />
       <div className="w-full max-w-2xl mx-auto">
+        {/* Top Right Workflow Button - Below wallet button */}
+        <div className="fixed top-20 right-4 z-40">
+          <button
+            onClick={() => setShowWorkflow(true)}
+            type="button"
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all duration-200 border-2 border-gray-700 hover:border-gray-600 flex items-center gap-2 shadow-lg"
+            title="View Workflow"
+          >
+            <span>📖</span>
+            <span className="hidden sm:inline">Workflow</span>
+          </button>
+        </div>
+
         {/* Back to Events Button */}
         <button
           onClick={() => setSelectedEventId(null)}

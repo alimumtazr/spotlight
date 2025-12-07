@@ -16,6 +16,7 @@ import {
 } from "../../src/utils/dbEvents";
 import { useToast } from "../../components/Toast";
 import ModeSwitcher from "../../components/ModeSwitcher";
+import WorkflowModal from "../../components/WorkflowModal";
 
 const QR_ROTATION_SECONDS = 30;
 
@@ -36,6 +37,7 @@ export default function ScannerPage() {
   const [newEventName, setNewEventName] = useState("");
   const [newEventExpiry, setNewEventExpiry] = useState("");
   const [newEventPrice, setNewEventPrice] = useState("");
+  const [showWorkflow, setShowWorkflow] = useState(false);
   const { showToast, ToastComponent } = useToast();
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -344,7 +346,20 @@ export default function ScannerPage() {
   return (
     <Fragment>
       {ToastComponent}
+      <WorkflowModal mode="guard" isOpen={showWorkflow} onClose={() => setShowWorkflow(false)} />
       <ModeSwitcher />
+      {/* Top Right Workflow Button */}
+      <div className="fixed top-20 right-4 z-40">
+        <button
+          onClick={() => setShowWorkflow(true)}
+          type="button"
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all duration-200 border-2 border-gray-700 hover:border-gray-600 flex items-center gap-2 shadow-lg"
+          title="View Workflow"
+        >
+          <span>📖</span>
+          <span className="hidden sm:inline">Workflow</span>
+        </button>
+      </div>
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-3xl space-y-6">
           {/* Header */}

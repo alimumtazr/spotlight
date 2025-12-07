@@ -66,12 +66,8 @@ export default function TicketView() {
       setTickets(myTickets);
 
       const urlEvent = searchParams?.get("eventId");
-      const chosen =
-        urlEvent && active.find((e) => e.id === urlEvent)
-          ? urlEvent
-          : myTickets.find((t) => active.some((e) => e.id === t.eventId))?.eventId ||
-            active[0]?.id ||
-            null;
+      // Only auto-select if there's a URL parameter, otherwise show cards
+      const chosen = urlEvent && active.find((e) => e.id === urlEvent) ? urlEvent : null;
       setSelectedEventId(chosen);
     };
     load();
@@ -324,6 +320,16 @@ export default function TicketView() {
     <>
       {ToastComponent}
       <div className="w-full max-w-2xl mx-auto">
+        {/* Back to Events Button */}
+        <button
+          onClick={() => setSelectedEventId(null)}
+          type="button"
+          className="mb-4 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all duration-200 border-2 border-gray-700 hover:border-gray-600 flex items-center gap-2"
+        >
+          <span>←</span>
+          <span>Back to Events</span>
+        </button>
+
         {/* Main Ticket Card */}
         <div className="bg-gray-900 rounded-xl p-8 border-2 border-gray-800 shadow-xl">
           {/* Header */}

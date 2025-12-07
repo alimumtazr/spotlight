@@ -24,3 +24,4 @@ export function RootProvider({ children }: { children: ReactNode }) {
     </OnchainKitProvider>
   );
 }
+

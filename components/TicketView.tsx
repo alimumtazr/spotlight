@@ -30,6 +30,7 @@ export default function TicketView() {
   const searchParams = useSearchParams();
 
   const [timeLeft, setTimeLeft] = useState(QR_ROTATION_SECONDS);
+  const [currentWindow, setCurrentWindow] = useState(getCurrentWindow());
   const [status, setStatus] = useState<"idle" | "signing" | "ready" | "error">("idle");
   
   // Signatures keyed by event
@@ -110,9 +111,9 @@ export default function TicketView() {
     return JSON.stringify({
       ...currentSignature,
       eventId: selectedEventId,
-      window: getCurrentWindow(),
+      window: currentWindow,
     });
-  }, [currentSignature, selectedEventId, isTicketScanned]);
+  }, [currentSignature, selectedEventId, isTicketScanned, currentWindow]);
 
   // Sign ONCE per event when ticket exists
   useEffect(() => {
@@ -152,11 +153,19 @@ export default function TicketView() {
     doSign();
   }, [hasTicketForSelected, address, selectedEventId, currentSignature, status, signMessageAsync]);
 
-  // Timer for QR rotation countdown
+  // Timer for QR rotation countdown and window updates
   useEffect(() => {
-    if (status !== "ready") return;
+    if (status !== "ready" || !hasTicketForSelected || isTicketScanned) return;
 
-    const interval = setInterval(() => {
+    // Update window every 30 seconds to trigger QR refresh
+    const windowInterval = setInterval(() => {
+      const newWindow = getCurrentWindow();
+      setCurrentWindow(newWindow);
+      setTimeLeft(QR_ROTATION_SECONDS); // Reset countdown
+    }, QR_ROTATION_SECONDS * 1000);
+
+    // Update countdown every second
+    const countdownInterval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           return QR_ROTATION_SECONDS;
@@ -165,8 +174,11 @@ export default function TicketView() {
       });
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [status]);
+    return () => {
+      clearInterval(windowInterval);
+      clearInterval(countdownInterval);
+    };
+  }, [status, hasTicketForSelected, isTicketScanned]);
 
   const handleCopy = useCallback(() => {
     const data = getQRData();
@@ -313,7 +325,7 @@ export default function TicketView() {
                   ) : qrData ? (
                     <>
                       <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
-                        <QRCode value={qrData} size={240} key={timeLeft} />
+                        <QRCode value={qrData} size={240} key={`${currentWindow}-${selectedEventId}`} />
                       </div>
                       <button
                         onClick={handleCopy}

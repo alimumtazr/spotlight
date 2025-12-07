@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
 import TicketView from "../components/TicketView";
+import ModeSwitcher from "../components/ModeSwitcher";
 import { useAccount } from "wagmi";
 import {
   ConnectWallet,
@@ -20,11 +20,14 @@ export default function Page() {
   const { isConnected } = useAccount();
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-black text-white font-sans selection:bg-blue-500/30">
-      {/* --- HEADER: SMART WALLET CONNECT --- */}
-      <div className="fixed top-0 right-0 p-4 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-sans selection:bg-blue-500/30 flex items-center justify-center p-4">
+      {/* Mode Switcher */}
+      <ModeSwitcher />
+      
+      {/* Wallet Connect - Top Right */}
+      <div className="fixed top-4 right-4 z-50">
         <Wallet>
-          <ConnectWallet className="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all">
+          <ConnectWallet className="bg-gray-900 rounded-lg px-4 py-2.5 border-2 border-gray-800 hover:border-blue-500 text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
             <Avatar className="h-6 w-6" />
             <Name />
           </ConnectWallet>
@@ -40,49 +43,29 @@ export default function Page() {
         </Wallet>
       </div>
 
-      {/* --- MAIN CONTENT --- */}
-      <main className="flex-grow flex flex-col items-center justify-center w-full px-4 pt-20 pb-10">
+      {/* Main Content - Centered Container */}
+      <div className="w-full max-w-2xl mx-auto">
         {!isConnected ? (
-          // STATE 1: WALLET NOT CONNECTED (Landing Page)
-          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <h1 className="text-6xl md:text-8xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-              SpotLight
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-lg mx-auto">
-              The un-screenshot-able ticket for GIKI Raves.
-              <span className="block text-sm mt-2 text-gray-600">
-                Powered by Base & Smart Wallets
-              </span>
-            </p>
-
-            <div className="p-1 rounded-2xl bg-gradient-to-r from-blue-500/50 to-purple-500/50 max-w-md mx-auto">
-              <div className="bg-gray-900 rounded-xl p-6">
-                <p className="text-blue-200 font-mono text-sm mb-4">
-                  Connect your wallet to mint access.
+          <div className="text-center">
+            <div className="bg-gray-900 rounded-xl p-8 md:p-12 border-2 border-gray-800 shadow-xl">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
+                SpotLight
+              </h1>
+              <p className="text-lg text-gray-400 mb-6">
+                The un-screenshot-able ticket for live events.
+              </p>
+              <div className="bg-gray-800 rounded-lg p-4 border-2 border-gray-700">
+                <p className="text-blue-200 text-sm mb-2">
+                  Connect your wallet to get started
                 </p>
-                <div className="animate-pulse bg-blue-500/20 h-2 w-32 mx-auto rounded-full"></div>
+                <div className="animate-pulse bg-blue-500/20 h-1.5 w-32 mx-auto rounded-full"></div>
               </div>
             </div>
           </div>
         ) : (
-          // STATE 2: WALLET CONNECTED (Show The Ticket App)
           <TicketView />
         )}
-      </main>
-
-      {/* --- FOOTER: LINKS --- */}
-      <footer className="w-full text-center py-6 text-gray-600 text-xs border-t border-gray-900">
-        <div className="flex justify-center gap-4 mb-2">
-          {/* Link to the Guard Scanner Page */}
-          <Link
-            href="/scanner"
-            className="hover:text-white transition-colors underline decoration-blue-500 underline-offset-4"
-          >
-            Open Guard Terminal
-          </Link>
-        </div>
-        <p>Built for Base Hackathon 2025</p>
-      </footer>
+      </div>
     </div>
   );
 }

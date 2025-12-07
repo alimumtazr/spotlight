@@ -11,6 +11,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Validate Firebase config
+if (typeof window !== "undefined") {
+  const missing = Object.entries(firebaseConfig)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+  
+  if (missing.length > 0) {
+    console.error("Missing Firebase environment variables:", missing);
+  }
+}
+
 // ---------------------------------------------------
 
 const app = initializeApp(firebaseConfig);

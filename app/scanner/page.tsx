@@ -286,7 +286,14 @@ export default function ScannerPage() {
   };
 
   const handleCreateEvent = async () => {
-    if (!address || !newEventName || !newEventExpiry) return;
+    if (!address) {
+      showToast("Please connect your wallet first", "error");
+      return;
+    }
+    if (!newEventName || !newEventExpiry) {
+      showToast("Please fill in all fields", "error");
+      return;
+    }
     const expiresAt = new Date(newEventExpiry).getTime();
     if (Number.isNaN(expiresAt) || expiresAt < Date.now()) {
       setErrorDetail("Expiry must be in the future");
@@ -294,13 +301,30 @@ export default function ScannerPage() {
       showToast("Expiry must be in the future", "error");
       return;
     }
-    const evt = await createEventDb(newEventName, expiresAt, address);
-    setOwnedEvents(await listOwnedEvents(address));
-    setSelectedEventId(evt.id);
-    setNewEventName("");
-    setNewEventExpiry("");
-    setStatus("IDLE");
-    showToast(`Event "${newEventName}" created!`, "success");
+    
+    try {
+      const eventName = newEventName; // Save before clearing
+      const evt = await createEventDb(eventName, expiresAt, address);
+      console.log("Event created:", evt);
+      
+      // Refresh events list
+      const updatedEvents = await listOwnedEvents(address);
+      setOwnedEvents(updatedEvents);
+      setSelectedEventId(evt.id);
+      
+      // Clear form
+      setNewEventName("");
+      setNewEventExpiry("");
+      setStatus("IDLE");
+      
+      showToast(`Event "${eventName}" created!`, "success");
+    } catch (error) {
+      console.error("Failed to create event:", error);
+      const errorMsg = error instanceof Error ? error.message : "Failed to create event";
+      setErrorDetail(errorMsg);
+      setStatus("ERROR");
+      showToast(`Error: ${errorMsg}`, "error");
+    }
   };
 
   // Handle paste verification
@@ -355,7 +379,8 @@ export default function ScannerPage() {
               <button
                 onClick={handleCreateEvent}
                 type="button"
-                className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 active:scale-95"
+                disabled={!address || !newEventName || !newEventExpiry}
+                className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 active:scale-95 disabled:active:scale-100"
               >
                 Create Event
               </button>

@@ -122,7 +122,8 @@ export default function TicketView() {
       !address ||
       !selectedEventId ||
       currentSignature ||
-      status === "signing"
+      status === "signing" ||
+      !currentTicket
     )
       return;
 
@@ -130,7 +131,8 @@ export default function TicketView() {
       setStatus("signing");
       
       try {
-        const tokenId = "0";
+        // Use the ticket's actual tokenId, not hardcoded "0"
+        const tokenId = currentTicket.tokenId;
         const message = `SPOTLIGHT_TICKET:${address}:${tokenId}:${selectedEventId}:GIKI_EVENT`;
         
         const signature = await signMessageAsync({ message });
@@ -151,7 +153,7 @@ export default function TicketView() {
     };
 
     doSign();
-  }, [hasTicketForSelected, address, selectedEventId, currentSignature, status, signMessageAsync]);
+  }, [hasTicketForSelected, address, selectedEventId, currentSignature, status, signMessageAsync, currentTicket]);
 
   // Timer for QR rotation countdown and window updates
   useEffect(() => {
